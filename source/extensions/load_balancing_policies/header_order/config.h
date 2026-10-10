@@ -24,8 +24,7 @@ using ::Envoy::Runtime::Loader;
 using ::Envoy::Upstream::ClusterInfo;
 using ::Envoy::Upstream::PrioritySet;
 
-class HeaderOrderLoadBalancerFactory
-    : public Upstream::TypedLoadBalancerFactoryBase<HeaderOrder> {
+class HeaderOrderLoadBalancerFactory : public Upstream::TypedLoadBalancerFactoryBase<HeaderOrder> {
 public:
   HeaderOrderLoadBalancerFactory()
       : TypedLoadBalancerFactoryBase("envoy.load_balancing_policies.header_order") {}

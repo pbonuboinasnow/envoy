@@ -41,8 +41,7 @@ void HeaderOrderRetryPriority::resetLoad(uint32_t num_priorities) {
 
 const Upstream::HealthyAndDegradedLoad& HeaderOrderRetryPriority::determinePriorityLoad(
     StreamInfo::StreamInfo* stream_info, const Upstream::PrioritySet& priority_set,
-    const Upstream::HealthyAndDegradedLoad& original_priority_load,
-    const PriorityMappingFunc&) {
+    const Upstream::HealthyAndDegradedLoad& original_priority_load, const PriorityMappingFunc&) {
   if (!order_parsed_) {
     parseOrderOnce(stream_info);
     order_parsed_ = true;

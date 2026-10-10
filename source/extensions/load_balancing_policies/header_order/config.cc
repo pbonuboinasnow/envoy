@@ -18,8 +18,8 @@ using ::envoy::extensions::load_balancing_policies::header_order::v3::HeaderOrde
 absl::StatusOr<Upstream::LoadBalancerConfigPtr>
 HeaderOrderLoadBalancerFactory::loadConfig(Server::Configuration::ServerFactoryContext& context,
                                            const Protobuf::Message& config) {
-  const HeaderOrder& header_order_config =
-      MessageUtil::downcastAndValidate<const HeaderOrder&>(config, context.messageValidationVisitor());
+  const HeaderOrder& header_order_config = MessageUtil::downcastAndValidate<const HeaderOrder&>(
+      config, context.messageValidationVisitor());
   // Enforced in config validation.
   ASSERT(header_order_config.has_fallback_policy());
   return HeaderOrderLbConfig::make(header_order_config, context);

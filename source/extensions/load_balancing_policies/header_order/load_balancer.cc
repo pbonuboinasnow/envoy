@@ -112,8 +112,7 @@ HeaderOrderLbConfig::HeaderOrderLbConfig(std::string&& metadata_namespace,
                                          std::string&& metadata_key,
                                          TypedLoadBalancerFactory* fallback_load_balancer_factory,
                                          LoadBalancerConfigPtr&& fallback_load_balancer_config)
-    : fallback_lb_config_{fallback_load_balancer_factory,
-                          std::move(fallback_load_balancer_config)},
+    : fallback_lb_config_{fallback_load_balancer_factory, std::move(fallback_load_balancer_config)},
       metadata_namespace_(std::move(metadata_namespace)), metadata_key_(std::move(metadata_key)) {}
 
 absl::StatusOr<std::unique_ptr<HeaderOrderLbConfig>>
@@ -144,10 +143,11 @@ HeaderOrderLbConfig::make(const HeaderOrder& config, ServerFactoryContext& conte
                    absl::StrJoin(missing_policies, ", ")));
 }
 
-Upstream::ThreadAwareLoadBalancerPtr
-HeaderOrderLbConfig::create(const ClusterInfo& cluster_info, const PrioritySet& priority_set,
-                            Loader& runtime, RandomGenerator& random,
-                            TimeSource& time_source) const {
+Upstream::ThreadAwareLoadBalancerPtr HeaderOrderLbConfig::create(const ClusterInfo& cluster_info,
+                                                                 const PrioritySet& priority_set,
+                                                                 Loader& runtime,
+                                                                 RandomGenerator& random,
+                                                                 TimeSource& time_source) const {
   return fallback_lb_config_.load_balancer_factory->create(
       makeOptRefFromPtr<const LoadBalancerConfig>(fallback_lb_config_.load_balancer_config.get()),
       cluster_info, priority_set, runtime, random, time_source);
@@ -169,9 +169,9 @@ LoadBalancerFactorySharedPtr HeaderOrderLoadBalancer::factory() {
 std::vector<uint32_t>
 HeaderOrderLoadBalancer::LoadBalancerImpl::parseOrder(LoadBalancerContext* context) const {
   std::vector<uint32_t> order;
-  const Protobuf::Value& value = Envoy::Config::Metadata::metadataValue(
-      &context->requestStreamInfo()->dynamicMetadata(), config_.metadataNamespace(),
-      config_.metadataKey());
+  const Protobuf::Value& value =
+      Envoy::Config::Metadata::metadataValue(&context->requestStreamInfo()->dynamicMetadata(),
+                                             config_.metadataNamespace(), config_.metadataKey());
   if (value.kind_case() != Protobuf::Value::kListValue) {
     return order;
   }
@@ -229,13 +229,15 @@ HeaderOrderLoadBalancer::LoadBalancerImpl::chooseHost(LoadBalancerContext* conte
 
   // No usable entry in the metadata-supplied order for this attempt: let the fallback policy
   // pick using its own, unmodified priority-based load balancing.
-  ENVOY_LOG(trace, "header_order: no usable priority in metadata order for attempt {}, "
-                   "deferring to fallback policy",
+  ENVOY_LOG(trace,
+            "header_order: no usable priority in metadata order for attempt {}, "
+            "deferring to fallback policy",
             attempt_count);
   return fallback_lb_->chooseHost(context);
 }
 
-LoadBalancerPtr HeaderOrderLoadBalancer::LoadBalancerFactoryImpl::create(LoadBalancerParams params) {
+LoadBalancerPtr
+HeaderOrderLoadBalancer::LoadBalancerFactoryImpl::create(LoadBalancerParams params) {
   return std::make_unique<LoadBalancerImpl>(config_, fallback_lb_factory_, params);
 }
 

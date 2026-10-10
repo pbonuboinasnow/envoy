@@ -48,7 +48,7 @@ using ::Envoy::Upstream::TypedLoadBalancerFactory;
 class HeaderOrderLbConfig : public Upstream::LoadBalancerConfig {
 public:
   static absl::StatusOr<std::unique_ptr<HeaderOrderLbConfig>> make(const HeaderOrder& config,
-                                                                    ServerFactoryContext& context);
+                                                                   ServerFactoryContext& context);
 
   ThreadAwareLoadBalancerPtr create(const ClusterInfo& cluster_info,
                                     const PrioritySet& priority_set, Loader& runtime,
@@ -82,8 +82,7 @@ private:
 class HeaderOrderLoadBalancer : public Upstream::ThreadAwareLoadBalancer,
                                 protected Logger::Loggable<Logger::Id::upstream> {
 public:
-  HeaderOrderLoadBalancer(const HeaderOrderLbConfig& config,
-                          ThreadAwareLoadBalancerPtr fallback_lb)
+  HeaderOrderLoadBalancer(const HeaderOrderLbConfig& config, ThreadAwareLoadBalancerPtr fallback_lb)
       : config_(config), fallback_lb_(std::move(fallback_lb)) {}
 
   LoadBalancerFactorySharedPtr factory() override;

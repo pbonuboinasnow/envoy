@@ -17,7 +17,7 @@ Upstream::RetryPrioritySharedPtr HeaderOrderRetryPriorityFactory::createRetryPri
       const envoy::extensions::retry::priority::header_order::v3::HeaderOrderConfig&>(
       config, validation_visitor);
   return std::make_shared<HeaderOrderRetryPriority>(typed_config.metadata_namespace(),
-                                                     typed_config.metadata_key(), max_retries);
+                                                    typed_config.metadata_key(), max_retries);
 }
 
 REGISTER_FACTORY(HeaderOrderRetryPriorityFactory, Upstream::RetryPriorityFactory);
